@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: left;
+            /* 將文字靠左對齊 */
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            /* 使用 flexbox 排列內容 */
+            justify-content: space-between;
+            /* 左右對齊 */
+            align-items: center;
+            /* 垂直居中 */
+        }
+
+        nav h2 a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            /* 使用 flexbox 排列連結 */
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            color: rgb(239, 77, 77);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .user-info {
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #333;
+            color: #fff;
+        }
+
+        thead td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tbody td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            /* 添加外圍線條 */
+        }
+
+        .td_progress {
+            color: #ff0000;
+            /* 設定進度顏色 */
+        }
+
+        .td_testGrade {
+            color: #ff0000;
+            /* 設定測驗分數顏色 */
+        }
+
+        .course-content {
+            /* display: flex;
+        flex-direction: column; */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .course-content iframe {
+            width: 70%;
+            height: 780px;
+            /* border: none; */
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            min-width: 120px;
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: #fff;
+            padding: 5px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* 個人檔案子導覽列的位置調整 */
+        #profile-menu {
+            position: relative;
+            /* 相對定位 */
+        }
+
+        #user-options {
+            position: absolute;
+            /* 絕對定位 */
+            top: 100%;
+            /* 與父元素底部對齊 */
+            left: 0;
+            display: none;
+            /* 隱藏 */
+        }
+
+        #profile-menu:hover #user-options {
+            display: block;
+            /* 滑鼠移動到項目時顯示子導覽列 */
+        }
+    </style>
+    <title>Firebase 註冊與登入</title>
+    <!-- 引入 Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <!-- Firebase 配置 -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuh-aSbP6cNQkeDsdm1xCcXM-yC22bi4E",
+            authDomain: "fir-35d79.firebaseapp.com",
+            projectId: "fir-35d79",
+            storageBucket: "fir-35d79.appspot.com",
+            messagingSenderId: "834377084560",
+            appId: "1:834377084560:web:5183aa5489360a3dc17215",
+            databaseURL: "https://fir-35d79-default-rtdb.firebaseio.com/"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</head>
+
+<body>
+    <h1>Firebase 註冊與登入</h1>
+
+    <!-- 註冊表單 -->
+    <h2>註冊</h2>
+    <input type="email" id="reg-email" placeholder="Email">
+    <input type="password" id="reg-password" placeholder="Password">
+    <button onclick="register()">註冊</button>
+
+    <!-- 登入表單 -->
+    <h2>登入</h2>
+    <input type="email" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="login()">登入</button>
+
+    <!-- JavaScript -->
+    <script>
+        // 註冊函數
+        function register() {
+            var email = document.getElementById("reg-email").value;
+            var password = document.getElementById("reg-password").value;
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert("註冊成功！");
+                    var user = userCredential.user;
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    alert("註冊失敗：" + errorMessage);
+                });
+        }
+
+        // 登入函數
+        function login() {
+            var email = document.getElementById("login-email").value;
+            var password = document.getElementById("login-password").value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert("登入成功！");
+                    var user = userCredential.user;
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    alert("登入失敗：" + errorMessage);
+                });
+        }
+    </script>
+</body>
+
+</html>
